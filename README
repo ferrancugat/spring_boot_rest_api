@@ -1,0 +1,51 @@
+An Spring Boot application has been built with the following endpoints.
+
+Login
+This endpoint returns a session key in the form of a string which shall be valid for use with
+the other functions for 10 minutes. The session keys should be unique.
+        Request: POST /login
+        Request body: &lt;username&gt; and &lt;password&gt;
+        Response: &lt;uniquesessionkey&gt;
+        Code: 202
+Add Level Scores
+This other endpoint can be called several times per user and level and does not return
+anything. Only requests with valid session keys shall be processed.
+        Request: PUT /level/3/score/1500
+        Set session key in header with name Session-Key
+        Response: (nothing)
+Code: 204
+High score list for a level
+Retrieves the high scores for a specific level for each user.
+    Request: GET /level/3/score?filter=highestscore
+    Response: JSON of array &lt;userid&gt; and &lt;score&gt;
+    Code: 200
+
+# Getting Started
+
+mvn spring-boot:run
+
+#Endpoints can be tested with the following curls
+
+-- login with an existing user
+
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"username":"admin","password":"admin"}' \
+  http://localhost:8080/login
+
+ Any of the following users can be used:
+ 'admin', 'admin'
+ 'Fernando', '1234'
+ 'Antonio', '1234'
+
+-- save some scoring
+
+curl --header "Accept: application/json" \
+     --header "Session-Key: ${SESSION_KEY}"\
+     --request PUT \
+     http://localhost:8080/level/${LEVEL}/score/${SCORE}
+
+--fetch some scoring
+
+curl --header "Accept: application/json" \
+     http://localhost:8080/level/3/score?filter=highestscore
